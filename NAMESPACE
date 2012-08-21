@@ -1,0 +1,2 @@
+useDynLib(trustOptim)
+exportPattern("^[[:alpha:]]+")
