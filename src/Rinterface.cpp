@@ -241,7 +241,7 @@ RcppExport SEXP quasiTR(SEXP start_, SEXP fn_, SEXP gr_,
     }
 
 
-RcppExport SEXP get_fdfh(SEXP x_, SEXP fn_, SEXP gr_, SEXP hs_, SEXP fd_method_, SEXP fd_eps_)
+RcppExport SEXP get_fdfh(SEXP x_, SEXP fn_, SEXP gr_, SEXP hs_struct_, SEXP fd_method_, SEXP fd_eps_)
 {
   BEGIN_R_INTERFACE
 
@@ -262,14 +262,14 @@ RcppExport SEXP get_fdfh(SEXP x_, SEXP fn_, SEXP gr_, SEXP hs_, SEXP fd_method_,
   Function fn(fn_);
   Function gr(gr_);
 
-  List hs(hs_);
+  List hs_struct(hs_struct_);
   int fd_method = Rcpp::as<int>(fd_method_);
   double fd_eps = Rcpp::as<double>(fd_eps_);
 
   // get hessian structure
 
-  IntegerVector iRow_((SEXP)hs["iRow"]);
-  IntegerVector jCol_((SEXP)hs["jCol"]);
+  IntegerVector iRow_((SEXP)hs_struct["iRow"]);
+  IntegerVector jCol_((SEXP)hs_struct["jCol"]);
   int nnz = iRow_.size();
   if (jCol_.size()!=nnz) throw MyException("Error:  Hessian index vectors must have same length\n",__FILE__, __LINE__);
  

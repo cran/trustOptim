@@ -2,22 +2,20 @@ Package: trustOptim
 Type: Package
 Title: Trust region nonlinear optimization, efficient for sparse
         Hessians
-Version: 0.7.0
-Date: 2012-08-21
+Version: 0.7.1
+Date: 2012-09-27
 Author: Michael Braun
 Maintainer: Michael Braun <braunm@mit.edu>
-Description: Trust region algorithm for nonlinear minimization. The
-        package includes methods that are designed to be efficient (in
+URL: braunm.scripts.mit.edu
+Description: Trust region algorithm for nonlinear optimization. In
+        addition to being more stable and robust than optim, this
+        package includes methods that are scalable and efficient (in
         terms of both speed and memory usage) when the Hessian is
         sparse.
- .
- License details are available in the LICENSE file in the source code.
-        There are restrictions on redistribution and use, and the user
-        is encouraged to become familiar with them.
 License: file LICENSE
 Depends: Rcpp (>= 0.9.6), RcppEigen (>= 0.3.1), Matrix
 LinkingTo: Rcpp, RcppEigen
 Copyright: (c) 2012 Michael Braun
-Packaged: 2012-08-22 21:48:40 UTC; braunm
+Packaged: 2012-09-27 18:58:12 UTC; braunm
 Repository: CRAN
-Date/Publication: 2012-08-23 06:09:03
+Date/Publication: 2012-09-27 19:48:13

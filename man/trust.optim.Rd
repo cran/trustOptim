@@ -80,6 +80,7 @@ The control list should include the following parameters.
 \item{preconditioner}{ID for choice of preconditoner.  0 is the
     identity matrix (default), and 1 is the diagonal of the Hessian. For the Sparse and SparseFD method, 2 is a modified Cholesky preconditioner. For the BFGS method, 2 is the full Cholesky decomposition.  If you select 2 for the SR1 method, the algorithm will use the diagonal preconditioner instead.}
 \item{fd.method}{This flag is 1 if using the direct method for computing a finite-differenced Hessian.  Otherwise, the indirect method is used. Default value is 0. See details.  This argument is ignored for methods SR1, BFGS and Sparse.}
+\item{fd.eps}{The perturbation amount for finite differencing. Used only for SparseFD method. Defaults to sqrt(.Machine$double.eps).}
 \item{trust.iter}{Maximum number of conjugate gradient iterations to run when solving the trust region subproblem.  A higher number will lead to more accurate solutions to the subproblem, but may also lead to longer run times. Defaults to 2000.} 
 }
 }

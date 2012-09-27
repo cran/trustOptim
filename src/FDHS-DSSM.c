@@ -2,6 +2,11 @@
    FDHS-DSSM.c -- this file is part of trustOptim, a nonlinear optimization package
    for the R statistical programming platform.
 
+   This code is used for the SparseFD method.  Specifically, it determines an
+   optimal partitioning of the rows/columns of a sparse Hessian matrix, computes
+   the Hessian using finite differencing in a way that exploits that sparsity,
+   and returns the Hessian, in compressed form.
+
    Please see the LICENSE file for details on the package license.
 
 

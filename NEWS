@@ -1,0 +1,13 @@
+NEWS file for trustOptim package
+
+
+VERSION 0.7.1 (Sept. 27, 2012)
+
+   o   Added get.fdfh function to return estimate of sparse Hessian when only the structure is known.
+
+   o   Added vignette that describes how to use the package, and compares performance to some other optimizers.
+
+
+VERSION 0.7.0
+
+   o  Initial upload to CRAN.

@@ -9,7 +9,7 @@ library(foreach)
 library(doParallel)
 library(trust)
 
-source("testfuncs.R")
+source("ex_funcs.R")
 
 set.seed(123)
 registerDoParallel(cores=10)
@@ -42,6 +42,11 @@ run.optim.test <- function(k, N) {
     
   hess.struct <- get.hess.struct(N, k)
 
+  XX.list <- vector("list",length=N)
+  for (i in 1:N) {
+    XX.list[[i]] <- tcrossprod(X[,i])
+  }
+
 ##  s1 <- system.time(HH <- get.hess(start, Y, X, inv.Omega, inv.Sigma))
 ##  print(s1)
 ##  s2 <- system.time(get.hess2(start, Y, X, inv.Omega, inv.Sigma))
@@ -56,7 +61,7 @@ run.optim.test <- function(k, N) {
     opt <- optim(start, fn=log.f, gr= get.grad,
                  method="CG", hessian=FALSE,
                  control = list(fnscale= -1, maxit=100000, REPORT=0, trace=0),
-                 Y=Y, X=X, inv.Omega=inv.Omega, inv.Sigma=inv.Sigma
+                 Y=Y, X=X, inv.Omega=inv.Omega, inv.Sigma=inv.Sigma, XX.list=XX.list
                  )
     t2 <- Sys.time()
     tm <- difftime(t2, t1, units="secs")
@@ -76,7 +81,7 @@ run.optim.test <- function(k, N) {
     opt3 <- optim(start, fn=log.f, gr= get.grad,
                   method="BFGS", hessian=FALSE,
                   control = list(fnscale= -1, maxit=100000, REPORT=100, trace=1),
-                  Y=Y, X=X, inv.Omega=inv.Omega, inv.Sigma=inv.Sigma
+                  Y=Y, X=X, inv.Omega=inv.Omega, inv.Sigma=inv.Sigma, XX.list=XX.list
                   )
     t2 <- Sys.time()
     tm <- difftime(t2, t1, units="secs")
@@ -100,7 +105,7 @@ run.optim.test <- function(k, N) {
                        hess.struct = hess.struct,
                        method = "Sparse",
                        control = control.list,
-                       Y=Y, X=X, inv.Omega=inv.Omega, inv.Sigma=inv.Sigma
+                       Y=Y, X=X, inv.Omega=inv.Omega, inv.Sigma=inv.Sigma, XX.list=XX.list
                        )
     t2 <- Sys.time()
     tm <- difftime(t2, t1, units="secs")
@@ -124,7 +129,7 @@ run.optim.test <- function(k, N) {
                        hess.struct = hess.struct,
                        method = "SparseFD",
                      control = control.list,
-                     Y=Y, X=X, inv.Omega=inv.Omega, inv.Sigma=inv.Sigma
+                     Y=Y, X=X, inv.Omega=inv.Omega, inv.Sigma=inv.Sigma, XX.list=XX.list
                      )
     t2 <- Sys.time()
     tm <- difftime(t2, t1, units="secs")
@@ -148,7 +153,7 @@ run.optim.test <- function(k, N) {
                        hess.struct = hess.struct,
                        method = "BFGS",
                        control = control.list,
-                       Y=Y, X=X, inv.Omega=inv.Omega, inv.Sigma=inv.Sigma
+                       Y=Y, X=X, inv.Omega=inv.Omega, inv.Sigma=inv.Sigma, XX.list=XX.list
                        )
     t2 <- Sys.time()
     tm <- difftime(t2, t1, units="secs")
@@ -172,7 +177,7 @@ run.optim.test <- function(k, N) {
                        hess.struct = hess.struct,
                        method = "SR1",
                        control = control.list,
-                       Y=Y, X=X, inv.Omega=inv.Omega, inv.Sigma=inv.Sigma
+                       Y=Y, X=X, inv.Omega=inv.Omega, inv.Sigma=inv.Sigma, XX.list=XX.list
                        )
     t2 <- Sys.time()
     tm <- difftime(t2, t1, units="secs")
@@ -197,7 +202,7 @@ run.optim.test <- function(k, N) {
                   parscale=rep(1,length(start)),
                   iterlim=50000,
                   minimize=FALSE,
-                  Y=Y, X=X, inv.Omega=inv.Omega, inv.Sigma=inv.Sigma
+                  Y=Y, X=X, inv.Omega=inv.Omega, inv.Sigma=inv.Sigma, XX.list=XX.list
                   )
     t2 <- Sys.time()
     tm <- difftime(t2, t1, units="secs")
@@ -216,8 +221,8 @@ run.optim.test <- function(k, N) {
 }
   
 T <- 25
-N.vec <- c(100, 1000)
-k.vec <- c(2,5,10)
+N.vec <- c(25, 200, 1000)
+k.vec <- c(2,10)
 
 meth.vec <- c("Sparse","SparseFD","BFGS.optim","trust","CG")
 n.meth <- length(meth.vec)
@@ -231,14 +236,14 @@ control.list <- list(start.trust.radius=5,
                      report.precision=5L,
                      maxit=2000000L,
                      function.scale.factor = as.numeric(-1),                           
-                     preconditioner=0L,
+                     preconditioner=1L,
                      trust.iter=5000L
                      )
 
 
 stats <- c("time","iters","nrm.gr","max.abs.gr")
 n.stats <- length(stats)
-n.trials <- 1
+n.trials <- 8
 
 res <- array(dim=c(length(N.vec), length(k.vec), n.meth, n.stats,n.trials))
 dimnames(res) <- list(N=N.vec,k=k.vec, method=meth.vec, stat=stats, trial=1:n.trials)

@@ -2,4 +2,7 @@
 
 PKG_LIBS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` 
 PKG_CPPFLAGS =  -I. -I../inst/include 
+##PKG_CXXFLAGS = -Wall -pedantic
+##PKG_CFLAGS = -Wall -pedantic
+
 

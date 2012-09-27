@@ -1,5 +1,5 @@
 
-log.f <- function(pars, Y, X, inv.Omega, inv.Sigma) {
+log.f <- function(pars, Y, X, inv.Omega, inv.Sigma, ...) {
 
   beta <- matrix(pars[1:(N*k)], k, N, byrow=FALSE)
   mu <- pars[(N*k+1):(N*k+k)]
@@ -51,7 +51,7 @@ dlog.f.dmu <- function(p, Y, X, inv.Omega, inv.Sigma) {
   return(res)
 }
 
-get.grad <- function(p, Y, X, inv.Omega, inv.Sigma) {
+get.grad <- function(p, Y, X, inv.Omega, inv.Sigma, ...) {
 
   q1 <- dlog.f.db(p, Y, X, inv.Omega, inv.Sigma)
   q2 <- dlog.f.dmu(p, Y, X, inv.Omega, inv.Sigma)
@@ -60,7 +60,7 @@ get.grad <- function(p, Y, X, inv.Omega, inv.Sigma) {
 }
 
 
-d2.db <- function(pars, Y, X, inv.Sigma) {
+d2.db <- function(pars, Y, X, inv.Sigma, XX.list) {
 
   beta <- matrix(pars[1:(N*k)], k, N, byrow=FALSE)
   mu <- pars[(N*k+1):length(pars)]
@@ -70,7 +70,8 @@ d2.db <- function(pars, Y, X, inv.Sigma) {
   
   q <- vector("list",length=N)
   for (i in 1:N) {
-    q[[i]] <- -T*p[i]*(1-p[i])*tcrossprod(X[,i]) - inv.Sigma
+##    q[[i]] <- -T*p[i]*(1-p[i])*tcrossprod(X[,i]) - inv.Sigma
+    q[[i]] <- -T*p[i]*(1-p[i])*XX.list[[i]] - inv.Sigma
   }
   B <- bdiag(q)
   return(B)
@@ -87,10 +88,10 @@ d2.cross <- function(inv.Sigma) {
 }
 
 
-get.hess <- function(p, Y, X, inv.Omega, inv.Sigma) {
+get.hess <- function(p, Y, X, inv.Omega, inv.Sigma, ...) {
   SX <- Matrix(inv.Sigma)
   XO <- Matrix(inv.Omega)
-  B1 <- d2.db(p, Y, X, SX)
+  B1 <- d2.db(p, Y, X, SX, ...)
   cross <- d2.cross(SX)
   Bmu <- d2.dmu(SX, XO)
   res <- rBind(cBind(B1,t(cross)),cBind(cross, Bmu))

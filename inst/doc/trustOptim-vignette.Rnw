@@ -1,0 +1,4 @@
+%\VignetteIndexEntry{Using the trustOptim package}
+\documentclass{article}
+\begin{document}
+\end{document}

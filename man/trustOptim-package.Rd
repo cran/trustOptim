@@ -20,8 +20,8 @@ encouraged to become familiar with them.
 \tabular{ll}{
 Package: \tab trustOptim\cr
 Type: \tab Package\cr
-Version: \tab 0.7-0\cr
-Date: \tab 2012-08-22\cr
+Version: \tab 0.7-1\cr
+Date: \tab 2012-09-27\cr
 License: \tab See the LICENSE file included in the source code.\cr
 LazyLoad: \tab yes\cr
 }
