@@ -1,9 +1,8 @@
-## ex1.R -- this file is part of the trustOptim contributed package for R
+## ex.2.R -- this file is part of the trustOptim contributed package for R
 ##
 
 
-## example of using trust.optim function when the sparsity structure of the Hessian
-## is known.  This example depends on the sparseHessianFD package.
+## example of using trust.optim function when the Hessian is known analytically
 
 rm(list=ls())
 gc()
@@ -11,27 +10,27 @@ gc()
 library(plyr)
 library(Matrix)
 library(mvtnorm)
+##library(numDeriv)
 library(trustOptim)
-library(sparseHessianFD)
 
 source("ex_funcs.R")
 
 set.seed(123)
 
-N <- 250
-k <- 8
-T <- 20
+N <- 200
+k <- 5
+T <- 10
 
 method <- "Sparse"
 control.list <- list(start.trust.radius=5,
                      stop.trust.radius = 1e-5,
                      prec=1e-7,
-                     report.freq=1L,
+                     report.freq=10L,
                      report.level=4L,
-                     report.precision=1L,
-                     maxit=500L,
+                     report.precision=2L,
+                     maxit=5000L,
                      function.scale.factor = as.numeric(-1),                           
-                     preconditioner=1L
+                     preconditioner=0L
                      ) 
 
 ## Simulate data and set priors
@@ -48,26 +47,23 @@ XB <- colSums(X * B)
 log.p <- XB - log1p(exp(XB))
 Y <- laply(log.p, function(q) return(rbinom(1,T,exp(q))))
 
+XX.list <- vector("list",length=N)
+for (i in 1:N) {
+  XX.list[[i]] <- tcrossprod(X[,i])
+}
 
 
 nvars <- N*k + k
 start <- rnorm(nvars) ## random starting values
-
-hess.struct <- get.hess.struct(N, k)
-
-## object for sparseHessianFD
-cat("Setting up function to compute Hessian using sparseHessianFD package.\n")
-obj <- new.sparse.hessian.obj(start, fn=get.f, gr=get.grad,
-                              hs=hess.struct, Y=Y, X=X,
-                              inv.Omega=inv.Omega, inv.Sigma=inv.Sigma)
-
+ 
 cat("running ",method, "\n")
 t1 <- Sys.time()
-opt <- trust.optim(start, fn=obj$fn,
-                   gr = obj$gr,
-                   hs = obj$hessian,
+opt <- trust.optim(start, fn=get.f,
+                   gr = get.grad,
+                   hs = get.hess,  ## used only for Sparse method
                    method = method,
-                   control = control.list
+                   control = control.list,
+                   Y=Y, X=X, inv.Omega=inv.Omega, inv.Sigma=inv.Sigma, XX.list=XX.list
                    )
 t2 <- Sys.time()
 td <- difftime(t2,t1)

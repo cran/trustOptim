@@ -8,7 +8,6 @@
 // This Source Code Form is subject to the license terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, you can obtain one at http://mozilla.org/MPL/2.0/.
-// See the trustOptim LICENSE file for more information.
 
 #ifndef __TRUST_OPTIM_CGBASE
 #define __TRUST_OPTIM_CGBASE
@@ -27,7 +26,6 @@
 #ifndef REPORT_HEADER_FREQ
 #define REPORT_HEADER_FREQ 25
 #endif
-
 
 using namespace Eigen;
 using std::endl;
@@ -52,7 +50,6 @@ class Trust_CG_Base {
  protected:
 
   THess Bk;
-
 
   TPreLLt PrecondLLt;
   TFunc & func; // functor that contains function to be optimized
@@ -189,8 +186,6 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
     f_width = std::max(log10(abs(f)),1. ) + report_precision + 5;
     g_width = std::max(log10(abs(nrm_gk)),1. ) + report_precision + 5;
 
-
-
     if (!my_finite(nrm_gk)) throw MyException("Norm of gradient at starting point is not finite",__FILE__,__LINE__); 
     
     // allocate workspace for trust region iteration
@@ -230,11 +225,9 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
   void Trust_CG_Base<TP, TFunc, THess, TPreLLt>::solve_trust_CG(const MatrixBase<Tvec>& pk_){
 
   // solves trust region subproblem using Steinhaug 1983, Section 2 algorithm
-
   // outputs:  proposed step direction p
 
-  // D is a lower-triangular preconditioning matrix.  
-
+ 
   MatrixBase<Tvec>& pk = const_cast<MatrixBase<Tvec>&>(pk_);
 
   double norm_rj, dot_ry, dot_ry_old, norm_zj, aj, bj, tau, dBd, norm_gk;
@@ -244,7 +237,6 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
   zj.setZero();
   rj = -gk;
 
-
   UPz(PrecondLLt, rj, wd); // wd is workspace
   norm_rj = wd.norm();
 
@@ -252,7 +244,6 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
   norm_gk = wd.norm();
 
   std::stringstream reason;
-
 
   // solving LL'y = r 
 
@@ -282,7 +273,6 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
     // next line is the dense version
     // norm_zj =  (PrecondLLt.matrixU() * zj).norm();
 
-
     if (norm_zj >= rad) {
  
       //find tau>=0 s.t. p intersects trust region
@@ -295,7 +285,6 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
 
     dot_ry = rj.dot(yj);
 
-    // optimize next line once sparse API is stable.  The eval() is a workaround.
     rj.noalias() -= aj * (Bk.template selfadjointView<Lower>() * dj).eval();    
 
     UPz(PrecondLLt, rj, wd);
@@ -460,7 +449,7 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
   using std::setiosflags;
   using std::setprecision;
 
-  if ( (page_count == header_freq) ) {
+  if ( page_count == header_freq ) {
     report_header();
     page_count = 0;
   }
@@ -499,7 +488,9 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
 						     const VectorXd & out_) {
 
   VectorXd & out = const_cast<VectorXd&>(out_);
-  out = X.matrixU().template triangularView<Upper>() * (X.permutationP() * v).eval();
+  VectorXd tmp2 = X.matrixU().template triangularView<Upper>() * (X.permutationP() * v).eval();
+
+  out = tmp2;
 
 }
 
@@ -522,8 +513,6 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
 
   double res = (X.matrixU() * (X.permutationPinv() * sk).eval()).norm();
   return(res);
-
-
 }
 
 
@@ -532,7 +521,6 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
 
   double res = (X.matrixU() * sk).norm();
   return(res);
-
 }
 
 
@@ -583,6 +571,8 @@ int Trust_CG_Base<TP, TFunc, THess, TPreLLt>::run() {
       if ( (status == MOVED) || (status == EXPAND) ) {
 
 	update_hessian();
+	// check for positive definiteness
+
 
 	if ( iter % precond_refresh_freq == 0 ) {  // regular recomputing of Hessian
 	  update_precond();

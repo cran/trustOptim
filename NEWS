@@ -1,6 +1,24 @@
 NEWS file for trustOptim package
 
 
+
+VERSION 0.8.0 (Dec. 27, 2012)
+
+   o   Removed sparseFD method. Instead, use the sparseHessianFD package for similar funcationality.
+
+   o   All ACM-licensed code was removed from the package and moved to the sparseHessianFD package.
+
+   o   Disabled the diagonal preconditioner, which was segfaulting for some yet-to-be-identified
+       reason.  Since it didn't work much better than no preconditioner at all, it's no great loss. 
+       The modified Cholesky preconditioner remains.
+
+   o   In the control list, setting preconditioner to 1 implements the modified Cholesky preconditioner.
+       The value 2 is no longer a valid (and will default to the identity preconditioner).
+
+   o   Fixed a bug where the function.scale.factor option defaulted to -1 instead of 1.
+       It now defaults to 1.
+
+
 VERSION 0.7.1 (Sept. 27, 2012)
 
    o   Added get.fdfh function to return estimate of sparse Hessian when only the structure is known.

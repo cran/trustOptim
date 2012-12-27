@@ -6,7 +6,6 @@
 // This Source Code Form is subject to the license terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
-// See the trustOptim LICENSE file for more information.
 
 
 #ifndef __TRUST_OPTIM_RFUNC_HESS__

@@ -1,5 +1,5 @@
 
-log.f <- function(pars, Y, X, inv.Omega, inv.Sigma, ...) {
+get.f <- function(pars, Y, X, inv.Omega, inv.Sigma, ...) {
 
   beta <- matrix(pars[1:(N*k)], k, N, byrow=FALSE)
   mu <- pars[(N*k+1):(N*k+k)]
@@ -112,12 +112,22 @@ get.hess.struct <- function(N, k) {
   
 }
 
-trust.func <- function(p, ...) {
+## trust.func <- function(p,  ...) {
 
-  f <- log.f(p, ...)
-  df <- get.grad(p, ...)
-  B <- get.hess(p, ...)
-  H <- as(B, "matrix")
-  return(list(value=f, gradient=df, hessian=H))
+##   f <- get.f(p, ...)
+##   df <- get.grad(p, ...)
+##   B <- get.hess(p, ...)
+##   H <- as(B, "matrix")
+##   return(list(value=f, gradient=df, hessian=H))
+
+## }
+
+
+trust.func <- function(p, obj, ...) {
+
+  res <- obj$all(p)
+  res$hs <- as(res$hs,"matrix")
+  names(res) <- c("value","gradient","hessian")
+  return(res)
 
 }

@@ -9,11 +9,11 @@
 ## with this file, you can obtain one at http://mozilla.org/MPL/2.0/.
 ## See the trustOptim LICENSE file for more information.
 
-trust.optim <- function(x, fn, gr, hs=NULL, method=c("SR1","BFGS","Sparse","SparseFD"),hess.struct=NULL, control = list(), ...)
+trust.optim <- function(x, fn, gr, hs=NULL, method=c("SR1","BFGS","Sparse"), control = list(), ...)
 {
 
-  if (is.null(method) || (match(method,c("SR1","BFGS","Sparse","SparseFD"),nomatch=0)==0)) {
-    stop("Error in trust.optim:  mathod must be SR1, BFGS, Sparse or SparseFD.")
+  if (is.null(method) || (match(method,c("SR1","BFGS","Sparse"),nomatch=0)==0)) {
+    stop("Error in trust.optim:  mathod must be SR1, BFGS, or Sparse.")
   }
   
   if (!is.function(fn)) stop ("Error in trust.optim:  fn must be a function")
@@ -54,12 +54,10 @@ trust.optim <- function(x, fn, gr, hs=NULL, method=c("SR1","BFGS","Sparse","Spar
               contract.threshold = 0.25,
               expand.threshold.ap = 0.8,
               expand.threshold.radius = 0.8,
-              function.scale.factor = as.numeric(-1),   
+              function.scale.factor = as.numeric(1),   
               precond.refresh.freq=1L,
-              preconditioner=1L,
+              preconditioner=0L,
               quasi.newton.method=0L,
-              fd.method=0L,
-              fd.eps=sqrt(.Machine$double.eps),
               trust.iter=2000L
               )
 
@@ -118,46 +116,26 @@ trust.optim <- function(x, fn, gr, hs=NULL, method=c("SR1","BFGS","Sparse","Spar
     stop("Error in trust.optim:  expand.factor must be an non-negative numeric.")
   }
 
-  if (!is.integer(con$fd.method) || con$fd.method<0 || con$fd.method>1 || !is.finite(con$fd.method)) {
-    stop("Error in trust.optim:  fd.method must be an integer, and either 0 or 1.")
-  }
-
-
-  if (method=="SparseFD") {
-
-    if (is.null(hess.struct)) {
-      stop("Error in trust.optim:  for SparseFD method, you must supply structure of the Hessian.")
-    }
-
-    quasi.newton.method <- 0L
-    
-    res <- .Call("sparseTR", x, fn1, gr1, hess.struct, con)
-    res$hessian <- Matrix:::t(as(res$hessian,"symmetricMatrix")) 
-  }
+ 
 
   if (method=="Sparse") {
-    
-    if (!is.null(hess.struct)) {
-      warning("Warning in trust.optim:  for Sparse method, Hessian structure is ignored.")
-    }
- 
-    quasi.newton.method <- 0L
-    
-    res <- .Call("sparseTR2", x, fn1, gr1, hs1, con)
+     
+    con$quasi.newton.method <- 0L    
+    res <- .Call("sparseTR", x, fn1, gr1, hs1, con)
     res$hessian <- Matrix:::t(as(res$hessian,"symmetricMatrix"))
     
   }
 
   if (method=="SR1" || method=="BFGS") {
     
-    if (!is.null(hess.struct)) {
-      warning("warning: Hessian structure will be ignored for quasi-Newton (non-sparse) method.")
+    if (!is.null(hs)) {
+      warning("warning: Hessian function will be ignored for quasi-Newton (non-sparse) method.")
     }
     
     if (method=="SR1") {
-      if (con$preconditioner==2) {
-        warning("warning:  Cannot use Cholesky decomposition as preconditioner for SR1 method.  Using diagonal preconditioner instead.")
-        con$preconditioner <- 1
+      if (con$preconditioner==1) {
+        warning("warning:  Cannot use Cholesky decomposition as preconditioner for SR1 method.  Using identity preconditioner instead.")
+        con$preconditioner <- 0L
       }
       con$quasi.newton.method <- 1L
     } else {

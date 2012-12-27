@@ -8,7 +8,6 @@
 // This Source Code Form is subject to the license terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, you can obtain one at http://mozilla.org/MPL/2.0/.
-// See the trustOptim LICENSE file for more information.
 
 
 #ifndef __TRUST_OPTIM_CGQUASI
@@ -51,15 +50,12 @@ private:
   
   Mat Precond; // current preconditioning matrix for trust sub-problem
   void init_precond();
-  void init_precond_diag();
   void init_precond_identity();
   void init_precond_Cholesky();
 
   void update_precond();
-  void update_precond_diag();
   void update_precond_identity();
   void update_precond_Cholesky();
-
 
   void updateHessian_SR1();
   void updateHessian_BFGS();
@@ -131,8 +127,6 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
 
   }
 
-
-
 template<typename TP, typename TFunc, typename THess, typename TPreLLt>
   template<typename Tvec>
   MB_Status Trust_CG_Optimizer<TP, TFunc, THess, TPreLLt>::get_current_state(const MatrixBase<Tvec> & pars_,
@@ -158,18 +152,15 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
    return status;
 }
 
-
-
-
 template<typename TP, typename TFunc, typename THess, typename TPreLLt>
 void Trust_CG_Optimizer<TP, TFunc, THess, TPreLLt>::init_precond() {
 
   switch (precond_ID) {
 
-  case 1:
-    init_precond_diag();
+  case 0:
+    init_precond_identity();
     break;
-  case 2:
+  case 1:
     init_precond_Cholesky();
     break;
   default:
@@ -179,18 +170,15 @@ void Trust_CG_Optimizer<TP, TFunc, THess, TPreLLt>::init_precond() {
   return;
 }
 
-
-
-
 template<typename TP, typename TFunc, typename THess, typename TPreLLt>
 void Trust_CG_Optimizer<TP, TFunc, THess, TPreLLt>::update_precond() {
 
   switch (precond_ID) {
 
-  case 1:
-    update_precond_diag();
+  case 0:
+    update_precond_identity();
     break;
-  case 2:
+  case 1:
     update_precond_Cholesky();
     break;
   default:
@@ -199,33 +187,6 @@ void Trust_CG_Optimizer<TP, TFunc, THess, TPreLLt>::update_precond() {
     
   return;
 }
-
-
-
-template<typename TP, typename TFunc, typename THess, typename TPreLLt> 
-void Trust_CG_Optimizer<TP, TFunc, THess, TPreLLt>::init_precond_diag() {
-
-  // this is a special case of a diagonal preconditioner
-  // in general, preconditioner must be lower triangular and positive definite
-
-  Precond.setZero();
-  Precond.diagonal() = Bk.diagonal();
-  PrecondLLt.compute(Precond);
-
-  return;
-}
-
-template<typename TP, typename TFunc, typename THess, typename TPreLLt> 
-void Trust_CG_Optimizer<TP, TFunc, THess, TPreLLt>::update_precond_diag() {
-
-  // this is a special case of a diagonal preconditioner
- 
-  Precond.diagonal() = Bk.diagonal();
-  PrecondLLt.compute(Precond);
-
-  return;
-}
-
 
 
 template<typename TP, typename TFunc, typename THess, typename TPreLLt> 
@@ -242,18 +203,11 @@ void Trust_CG_Optimizer<TP, TFunc, THess, TPreLLt>::init_precond_Cholesky() {
 
 template<typename TP, typename TFunc, typename THess, typename TPreLLt> 
 void Trust_CG_Optimizer<TP, TFunc, THess, TPreLLt>::update_precond_Cholesky() {
-
-  // this is a special case of a diagonal preconditioner
  
   PrecondLLt.compute(Bk);
 
   return;
 }
-
-
-
-
-
 
 
 template<typename TP, typename TFunc, typename THess, typename TPreLLt> 
@@ -332,9 +286,6 @@ void Trust_CG_Optimizer<TP, TFunc, THess, TPreLLt>::updateHessian_BFGS()
 
   return;
 }
-
-
-
 
 
 #endif

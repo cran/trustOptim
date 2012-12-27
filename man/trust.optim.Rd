@@ -5,8 +5,8 @@
 	Run nonlinear minimizer using trust region algorithm with conjugate gradient search directions and quasi-Hessian updates
 	}
 \usage{
-trust.optim(x, fn, gr, hs=NULL, method=c("SR1","BFGS","Sparse","SparseFD"),
-	        hess.struct=NULL, control=list(), \dots)
+trust.optim(x, fn, gr, hs=NULL, method=c("SR1","BFGS","Sparse"),
+	    control=list(), \dots)
 }
 
 \arguments{
@@ -22,12 +22,10 @@ trust.optim(x, fn, gr, hs=NULL, method=c("SR1","BFGS","Sparse","SparseFD"),
             available, and the method is SR1 or BFGS, the user should consider a
             numerical approximation using finite differencing (see the
             numDeriv package).  Do not use a finite-differenced gradient with 
-	    the SparseFD method.  That will cause a world of hurt.}
+	    the Sparse method.  That will cause a world of hurt.}
 	 \item{hs}{an R function that takes x as its first argument.
 	   Returns a Hessian matrix object of class "dgCMatrix" (see the Matrix package).  This function is called only if the selected method is "Sparse."}      
-\item{method}{Valid arguments are "SR1","BFGS","Sparse" or "SparseFD"}
-\item{hess.struct}{For  method SparseFD, a list with exactly two entries: integer vectors iRow and jCol. See details.  Will be ignored for methods SR1, BFGS and Sparse. 
-    }
+\item{method}{Valid arguments are "SR1","BFGS",and "Sparse".}
 \item{control}{A list containing control parameters for the
     optimizer. See
     details.}
@@ -40,7 +38,7 @@ trust.optim(x, fn, gr, hs=NULL, method=c("SR1","BFGS","Sparse","SparseFD"),
 	\item{fval}{Value of the objective function}
 	\item{solution}{Parameter vector at the optimum}
 	\item{gradient}{Gradient at the optimum} 
-	\item{hessian}{Estimate of the Hessian at the optimum (returned only for Sparse and SparseFD methods).}
+	\item{hessian}{Estimate of the Hessian at the optimum (as class "symmetricMatrix", returned only for Sparse method).}
 	\item{iterations}{Number of iterations before stopping}
 	\item{status}{A message describing the last state of the iterator}
 }
@@ -69,7 +67,7 @@ The control list should include the following parameters.
 \item{expand.factor}{When the algorithm decides to expand the trust
     region, it will multiply the algorithm by this factor. Defaults to 3.}
 \item{contract.threshold}{The algorithm with accept a proposed move if the ratio of the actual improvement in the objective function, to the predicted improvement from the trust region subproblem, is greater than this amount.  Otherwise, the trust region will contract.  Default is 0.25.}
-\item{expand.threshold.ap}{First criterion to determine if the trust region should expand.  If the ratio of the actual and proposed improvements in the objective function is less than this factor, the algorithm will consider expanding the trust region.  See \code{expand.threshold.radius}. DEfault is 0.8.}
+\item{expand.threshold.ap}{First criterion to determine if the trust region should expand.  If the ratio of the actual and proposed improvements in the objective function is less than this factor, the algorithm will consider expanding the trust region.  See \code{expand.threshold.radius}. Default is 0.8.}
 \item{expand.threshold.radius}{If the ratio of the actual and proposed improvement in the objective function is less than \code{expand.threshold.ap}, then, if the normed distance of the proposed move is greater than  \code{expand.threshold.radius}, times the current trust region radius, the trust region will expand.  Default is 0.8.}
 \item{function.scale.factor}{The algorithm will minimize \code{fn} times this
     factor. If you want to maximize \code{fn}, this value should be negative
@@ -78,31 +76,11 @@ The control list should include the following parameters.
     for the conjugate gradiate estimation of the trust region
     subproblem is reestimated.  Preconditioners can help the convergence properties of the algoriothm.  Default is 1.}
 \item{preconditioner}{ID for choice of preconditoner.  0 is the
-    identity matrix (default), and 1 is the diagonal of the Hessian. For the Sparse and SparseFD method, 2 is a modified Cholesky preconditioner. For the BFGS method, 2 is the full Cholesky decomposition.  If you select 2 for the SR1 method, the algorithm will use the diagonal preconditioner instead.}
-\item{fd.method}{This flag is 1 if using the direct method for computing a finite-differenced Hessian.  Otherwise, the indirect method is used. Default value is 0. See details.  This argument is ignored for methods SR1, BFGS and Sparse.}
-\item{fd.eps}{The perturbation amount for finite differencing. Used only for SparseFD method. Defaults to sqrt(.Machine$double.eps).}
+    identity matrix (default), For the Sparse method, 1 is a modified Cholesky preconditioner. For the BFGS method, 1 is the full Cholesky decomposition.  If you select 1 for the SR1 method, the algorithm will use the identity preconditioner instead.}
 \item{trust.iter}{Maximum number of conjugate gradient iterations to run when solving the trust region subproblem.  A higher number will lead to more accurate solutions to the subproblem, but may also lead to longer run times. Defaults to 2000.} 
 }
 }
 
-\section{Hessian information}{
-For the SparseFD method, you must provide information about the structure of the Hessian. There are two elements to the hess.struct list:
-\describe{
-	\item{iRow}{row indices of non-zero entries in the \emph{lower triangle} of the Hessian}
-	\item{jCol}{column indices of non-zero entries in the \emph{lower triangle} of the Hessian}
-}
-Indexing starts at 1, and should include the diagonal elements, even though it is obvious that the diagonal elements are non-zero.  Entries must be ordered by column, and by row within columns.  Do not include any entries for the upper triangle.
-
-The algorithms used for estimating sparse Hessians using finite differencing are described in 
-
-Coleman, Thomas F, Burton S Garbow, and Jorge J More. 1985. Software
-for Estimating Sparse Hessian Matrices. ACM Transaction on
-Mathematical Software 11 (4) (December): 363-377.
-
-This method involves a partitioning and permutation of the Hessian matrix to reduce the number of distinct finite differencing operations of the gradient.  There are two methods for computing the partition and permutation:  direct and indirect.  The direct method tends to require more computation, but may be more accurate.  We recommend the indirect method to start, so the default value is 0.
-
-
-}
 \section{Report levels}{
 The \code{report.level} control parameter determines how much information is displayed each time the algorithm reports the current state.  Possible values are 
 
@@ -128,6 +106,16 @@ The algorithm will stop when one of the following three conditions are met:
 }
 
 If the algorithm appears to have stopped prematurely (i.e., the norm of the gradient is still too large), then one might just restart the algorithm.  For the quasi-Newton algorithms (SR1 and BFGS), this will refresh the Hessian, and might allow more progress to be made.
+}
+
+\section{Estimating a sparse Hessian}{
+Sometimes estimating the Hessian is easy (e.g., you have an analytic representation, or you are using some kind of algorithmic differentiation software).  If you do not know the Hessian, but you do know the sparsity structure, try the sparseHessianFD package. The routines in sparseHessianFD compute the Hessian using finite differencing, but in a way that exploits the sparsity structure.  In many cases, this can be faster than constructing an analytic Hessian for a large problem (e.g., when the Hessian has a block-arrow structure with a large number of blocks).
+
+To use the sparseHessian package, you need to provide the row and column indices of the non-zero elements of the lower triangle of the Hessian. This structure cannot change during the course of the trust.optim routine.  Also, you really should provide an analytic gradient.  sparseHessianFD computes finite differences of the gradient, so if the gradient itself is finite-differenced, so much error is propogated through that the Hessians are nearly worthless close to the optimum.
+
+Of course, sparseHessianFD is useful only for the Sparse method.  That said, one may still get decent performance using these routines even if the Hessian is sparse, if the problem is not too large.  Just treat the Hessian as if it were sparse.
+
+
 }
 
 

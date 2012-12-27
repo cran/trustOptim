@@ -9,7 +9,6 @@
 // This Source Code Form is subject to the license terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, you can obtain one at http://mozilla.org/MPL/2.0/.
-// See the trustOptim LICENSE file for more information.
 
 
 #ifndef __TRUST_OPTIM_CGSPARSE
@@ -50,12 +49,10 @@ private:
   Index nnz;
 
   void update_precond();
-  void update_precond_diag();
   void update_precond_identity();
   void update_precond_modified_Cholesky();
 
   void init_precond();
-  void init_precond_diag();
   void init_precond_identity();
   void init_precond_modified_Cholesky();
 
@@ -171,50 +168,6 @@ template<typename Tvec, typename Tout>
    return status;
 }
 
-template<typename TP, typename TFunc, typename THess, typename TPreLLt> 
-void Trust_CG_Sparse<TP, TFunc, THess, TPreLLt>::init_precond_diag() {
-
-  // this is a special case of a diagonal preconditioner
-  // in general, preconditioner must be lower triangular and positive definite
-
-  SparseMatrixXd tmp(nvars, nvars);
-  tmp.reserve(Eigen::VectorXi::Constant(nvars,1));
-
-  double el;
-
-  for (int j=0; j<nvars; j++) {
-    el = Bk.coeff(j,j);
-    tmp.insert(j,j) = el;
-  }
-   tmp.makeCompressed();
-
-  PrecondLLt.analyzePattern(tmp);
-  PrecondLLt.factorize(tmp);
-
-  return;
-}
-
-template<typename TP, typename TFunc, typename THess, typename TPreLLt> 
-void Trust_CG_Sparse<TP, TFunc, THess, TPreLLt>::update_precond_diag() {
-
-  // this is a special case of a diagonal preconditioner
- 
-  SparseMatrixXd tmp(nvars, nvars);
-  tmp.reserve(Eigen::VectorXi::Constant(nvars,1));
-
-  double el;
-  for (int j=0; j<nvars; j++) {
-    el = Bk.coeff(j,j);
-    tmp.insert(j,j) = el;
-  }
-  tmp.makeCompressed();
-
-
-  // PrecondLLt already analyzed
-  PrecondLLt.factorize(tmp);
-
-  return;
-}
 
 
 template<typename TP, typename TFunc, typename THess, typename TPreLLt> 
@@ -240,8 +193,6 @@ void Trust_CG_Sparse<TP, TFunc, THess, TPreLLt>::init_precond_identity() {
 template<typename TP, typename TFunc, typename THess, typename TPreLLt> 
 void Trust_CG_Sparse<TP, TFunc, THess, TPreLLt>::update_precond_identity() {
 
-  // this is a special case of a diagonal preconditioner
-  
   // Do nothing.  Preconditioner will always be identity matrix
  
   return;
@@ -254,10 +205,8 @@ void Trust_CG_Sparse<TP, TFunc, THess, TPreLLt>::init_precond() {
   case 0:
     init_precond_identity();
     break;
+ break;
   case 1:
-    init_precond_diag();
-    break;
-  case 2:
     init_precond_modified_Cholesky();
     break;
   default:
@@ -277,9 +226,6 @@ void Trust_CG_Sparse<TP, TFunc, THess, TPreLLt>::update_precond() {
     update_precond_identity();
     break;
   case 1:
-    update_precond_diag();
-    break;
-  case 2:
     update_precond_modified_Cholesky();
     break;
    default:
@@ -297,7 +243,6 @@ void Trust_CG_Sparse<TP, TFunc, THess, TPreLLt>::init_precond_modified_Cholesky(
   // this is a special case of a hessian preconditioner
   // in general, preconditioner must be lower triangular and positive definite
  
-
   PrecondLLt.analyzePattern(Bk); // set sparsity pattern same as Hessian
 
   update_precond_modified_Cholesky();
