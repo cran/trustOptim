@@ -4,7 +4,7 @@
 // This file is part of trustOptim, a nonlinear optimization package
 // for the R statistical programming platform.
 //
-// Copyright (C) 2012 Michael Braun
+// Copyright (C) 2013 Michael Braun
 //
 // This Source Code Form is subject to the license terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -39,9 +39,7 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>  // TP i
   using Trust_CG_Base<TP, TFunc, THess, TPreLLt>::rad;
   using Trust_CG_Base<TP, TFunc, THess, TPreLLt>::iter;
 
-
 private:
-
 
   // Tool to compute hessian.  Returns a dense representation
 
@@ -205,7 +203,7 @@ void Trust_CG_Sparse<TP, TFunc, THess, TPreLLt>::init_precond() {
   case 0:
     init_precond_identity();
     break;
- break;
+    break;
   case 1:
     init_precond_modified_Cholesky();
     break;

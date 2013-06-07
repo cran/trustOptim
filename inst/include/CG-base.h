@@ -3,7 +3,7 @@
 // This file is part of trustOptim, a nonlinear optimization package
 // for the R statistical programming platform.
 //
-// Copyright (C) 2012 Michael Braun
+// Copyright (C) 2013 Michael Braun
 //
 // This Source Code Form is subject to the license terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -78,7 +78,7 @@ class Trust_CG_Base {
   double try_f, gs;
   double nrm_gk, ared, pred, sBs, ap, nrm_sk_scaled;
   int i, j;
-  int header_freq, page_count, f_width, g_width;
+  int header_freq, page_count, f_width, g_width, r_width;
 
 
   // allocate internal workspace for trust region computation
@@ -185,6 +185,8 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
 
     f_width = std::max(log10(abs(f)),1. ) + report_precision + 5;
     g_width = std::max(log10(abs(nrm_gk)),1. ) + report_precision + 5;
+    // modified_gr
+    r_width = std::max(log10(abs(rad)),1. ) + report_precision + 5;
 
     if (!my_finite(nrm_gk)) throw MyException("Norm of gradient at starting point is not finite",__FILE__,__LINE__); 
     
@@ -270,9 +272,6 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
     UPz(PrecondLLt, zj, wd); // wd is workspace
     norm_zj = wd.norm();
 
-    // next line is the dense version
-    // norm_zj =  (PrecondLLt.matrixU() * zj).norm();
-
     if (norm_zj >= rad) {
  
       //find tau>=0 s.t. p intersects trust region
@@ -345,19 +344,14 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
 
     try_x = xk+sk;
   
-    func.get_fdf(try_x, try_f, try_g); //  get f(x+s), grad f(x+s)
+    func.get_f(try_x, try_f); //  get f(x+s)
 
-    if (my_finite(try_g.norm())) {
+    if (my_finite(try_f)) {
 
       try_f *= function_scale_factor;
-      try_g *= function_scale_factor;
-    
-      yk = try_g - gk;
       ared = f - try_f;
       gs = gk.dot(sk);
-      
       sBs = sk.dot(Bk.template selfadjointView<Lower>() * sk);    
-    
       pred = -(gs + sBs/2);
       
       if (pred < 0) {
@@ -365,8 +359,9 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
       }  
       
       ap = ared/pred;
+	  	  
     } else {
-      step_status = FAILEDCG; // new gradient is not finite
+      step_status = FAILEDCG; // new function value is not finite
     }
   }
 
@@ -374,17 +369,28 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
     
     if (ap > contract_threshold) {
 
-      f = try_f;
-      xk += sk;
-      gk = try_g;
-      nrm_gk = gk.norm();
-    
-      if ( (ap > expand_threshold_ap) && (nrm_sk_scaled >= expand_threshold_rad*rad) ) {  
-	step_status = EXPAND;
-      } else {
-	step_status = MOVED;
-      }
+	  func.get_df(try_x, try_g); //  get grad(x+s)
+	  
+	  if (my_finite(try_g.norm())){
+		  		
+		  try_g *= function_scale_factor;
+		  yk = try_g - gk; // used for quasi-newton.  Should eventually move to CG-quasi
+		  
+		  f = try_f;
+		  xk += sk;
+		  gk = try_g;
+		  nrm_gk = gk.norm();
+		
+		  if ( (ap > expand_threshold_ap) && (nrm_sk_scaled >= expand_threshold_rad*rad) ) {  
+		step_status = EXPAND;
+		  } else {
+		step_status = MOVED;
+		  }
+	  }else{
+		step_status = FAILEDCG; // new gradient is not finite
+	  }
 
+	
     } else { //Contracting trust region
       step_status = CONTRACT;
     }
@@ -415,9 +421,7 @@ void Trust_CG_Base<TP, TFunc, THess, TPreLLt>::report_header() {
   using std::setiosflags;
   using std::setprecision;
 
-  int tp = std::min(report_precision,2);
-
-  if (report_level >= 1) {  
+   if (report_level >= 1) {  
     TRUST_COUT  <<  endl << setw(floor(log10(maxit))+1) << right << "iter";
     TRUST_COUT  << setw(f_width) << right << "f  ";
   }
@@ -426,7 +430,7 @@ void Trust_CG_Base<TP, TFunc, THess, TPreLLt>::report_header() {
     TRUST_COUT  << setw(27) << right << "status";  
   }
   if (report_level >= 3) {
-    TRUST_COUT  << setw(tp+7) << right << "rad";
+    TRUST_COUT  << setw(r_width) << right << "rad";
   }
   if (report_level >=4) {
     TRUST_COUT << setw(floor(log10(trust_iter))+6) << right << "CG iter";
@@ -454,8 +458,6 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
     page_count = 0;
   }
 
-  int tp = std::min(report_precision,2);
-
   page_count++;
 
   if (report_level >= 1) {
@@ -468,7 +470,7 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
     TRUST_COUT  << setw(27) << right << MB_strerror(status);
   }
   if (report_level >= 3) {
-    TRUST_COUT  << setprecision(tp) << setw(tp+7) << right << rad;
+    TRUST_COUT  << setprecision(report_precision) << setw(r_width) << right << rad;
   }
   if (report_level >=4) {
     TRUST_COUT << setw(floor(log10(trust_iter))+6) << right << num_CG_iters;

@@ -13,7 +13,10 @@
 #ifndef __TRUST_OPTIM_RINTERFACE
 #define __TRUST_OPTIM_RINTERFACE
 
-#define IS_R
+#ifdef R_USE_MKL
+#define EIGEN_USE_MKL_ALL
+#endif
+
 
 #include <RcppEigen.h>
 #include <common_R.hpp>

@@ -17,8 +17,8 @@ of both speed and memory usage) when the Hessian is sparse.
 \tabular{ll}{
 Package: \tab trustOptim\cr
 Type: \tab Package\cr
-Version: \tab 0.8-0\cr
-Date: \tab 2012-12-27\cr
+Version: \tab 0.8-1\cr
+Date: \tab 2013-06-12\cr
 License: \tab MPL (>= 2.0)\cr
 LazyLoad: \tab yes\cr
 }
