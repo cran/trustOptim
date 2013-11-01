@@ -1,5 +1,16 @@
 NEWS file for trustOptim package
 
+
+VERSION 0.8.2 (November 4, 2013)
+
+   o   Minor changes in the demo/choice_sparse.R and demo/choice_dense.R, so the
+       algorithms start closer to the optimal values.
+
+   o   Moved vignette code to conform to new CRAN standards.
+
+   o   Updated maintainer contact information.
+
+
 VERSION 0.8.1 (June 7, 2013)
 
    o   Rewrote update_one_step() in CG-base.h so the gradient is not evaluated if we already know that

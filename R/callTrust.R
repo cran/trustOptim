@@ -122,7 +122,7 @@ trust.optim <- function(x, fn, gr, hs=NULL, method=c("SR1","BFGS","Sparse"), con
      
     con$quasi.newton.method <- 0L    
     res <- .Call("sparseTR", x, fn1, gr1, hs1, con)
-    res$hessian <- Matrix:::t(as(res$hessian,"symmetricMatrix"))
+    res$hessian <- Matrix::t(as(res$hessian,"symmetricMatrix"))
     
   }
 

@@ -17,18 +17,6 @@
 
 inline bool my_ret_bool(bool x) {return(x);}
 
-#define my_assert(x) do { \
-    if(!my_ret_bool(x) ) throw MyException(EIGEN_MAKESTRING(x), __FILE__, __LINE__); \
-} \
-while (false);
-
-#ifdef eigen_assert
-#undef eigen_assert
-#endif
-#define eigen_assert(x) my_assert(x)
-
-
-
 #include <Eigen/Core>
 #include <Eigen/Sparse>
 #include <Eigen/Cholesky>

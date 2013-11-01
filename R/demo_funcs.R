@@ -126,7 +126,7 @@ demo.get.hess.struct <- function(N, k) {
   B1 <- kronecker(Diagonal(N),Matrix(TRUE,k,k))
   B2 <- Matrix(TRUE,k,N*k)
   B3 <- Matrix(TRUE,k,k)
-  H <- cBind(rBind(B1,B2),rBind(Matrix:::t(B2),B3))
+  H <- cBind(rBind(B1,B2),rBind(Matrix::t(B2),B3))
   res <- Matrix.to.Coord(H)
   return(res)
   
