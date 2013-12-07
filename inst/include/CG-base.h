@@ -422,7 +422,7 @@ void Trust_CG_Base<TP, TFunc, THess, TPreLLt>::report_header() {
   using std::setprecision;
 
    if (report_level >= 1) {  
-    TRUST_COUT  <<  endl << setw(floor(log10(maxit))+1) << right << "iter";
+     TRUST_COUT  <<  endl << setw(floor(log10(double(maxit)))+1) << right << "iter";
     TRUST_COUT  << setw(f_width) << right << "f  ";
   }
   if (report_level >=2) {
@@ -433,7 +433,7 @@ void Trust_CG_Base<TP, TFunc, THess, TPreLLt>::report_header() {
     TRUST_COUT  << setw(r_width) << right << "rad";
   }
   if (report_level >=4) {
-    TRUST_COUT << setw(floor(log10(trust_iter))+6) << right << "CG iter";
+    TRUST_COUT << setw(floor(log10(double(trust_iter)))+6) << right << "CG iter";
     TRUST_COUT << setw(27) << "CG result";
   }
   if (report_level >= 1) {
@@ -462,7 +462,7 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
 
   if (report_level >= 1) {
     TRUST_COUT << setiosflags(ios::fixed) << setprecision(report_precision);
-    TRUST_COUT  << setw(floor(log10(maxit))+1) << right << iter;
+    TRUST_COUT  << setw(floor(log10(double(maxit)))+1) << right << iter;
     TRUST_COUT  << setw(f_width) << right << f;
   }
   if (report_level >=2) {
@@ -473,7 +473,7 @@ template<typename TP, typename TFunc, typename THess, typename TPreLLt>
     TRUST_COUT  << setprecision(report_precision) << setw(r_width) << right << rad;
   }
   if (report_level >=4) {
-    TRUST_COUT << setw(floor(log10(trust_iter))+6) << right << num_CG_iters;
+    TRUST_COUT << setw(floor(log10(double(trust_iter)))+6) << right << num_CG_iters;
     TRUST_COUT << setw(27) << right << CG_stop_reason;
   }
   if (report_level >= 1) {
@@ -556,7 +556,7 @@ int Trust_CG_Base<TP, TFunc, THess, TPreLLt>::run() {
 
 
       // check converge of algorithm
-      if (nrm_gk/sqrt(nvars) <= prec) {
+      if (nrm_gk/sqrt(double(nvars)) <= prec) {
 	status = SUCCESS; // successful convergence of algorithm
       }
 

@@ -1,6 +1,6 @@
-9009089daefe85a0c930cabf8d7de793 *DESCRIPTION
+74d8d7ede025928f434085cf2d9bff8d *DESCRIPTION
 1f9c861caac09bef933fc97368e73126 *NAMESPACE
-906e81ffdb6ccc8023aab1165536497f *NEWS
+f18927e7333f5967a17e8a6f7e2ac813 *NEWS
 37584a24162c6ac9901d8a73c0354e1a *R/callTrust.R
 56d4d090941cccc53fbc9291fda0e96b *R/demo_funcs.R
 e4d94762906e22ebc22cef5378ad5106 *R/utils.R
@@ -9,8 +9,8 @@ df6f23d66f00a29aa8cf7fddf3276aea *demo/00Index
 e294f919a1346ba701548fd22fa40df8 *demo/choice_dense.R
 95bb15d7f6cd685cc00266a448aa06db *demo/choice_sparse.R
 1f2b1c6441bcb85b83a6aa47d7383c33 *inst/doc/trustOptim.Rnw
-d9acf9610c27c461bb3edb3e7e7c7b66 *inst/doc/trustOptim.pdf
-f654ef74b699c7d932f0c0fc002e2d19 *inst/include/CG-base.h
+801f69e20ed55b0b5d037998da983905 *inst/doc/trustOptim.pdf
+607ff1ab06d0906e31d352e6b1c18d27 *inst/include/CG-base.h
 b68bba8267ec28eaea83333ef0854572 *inst/include/CG-quasi.h
 beaa72b079f84e918c03c4e77e0b8411 *inst/include/CG-sparse.h
 3e9a8429f80314ca05e3ccd3e5cc2eaa *inst/include/Rfunc.cpp

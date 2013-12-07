@@ -1,5 +1,10 @@
 NEWS file for trustOptim package
 
+VERSION 0.8.3 (December 7, 2013)
+
+   o   For log10(x) and sqrt(x), with x being an integer, provide explicit casts
+       from int to double (strict conformance with C++, need to compile
+       on Solaris).
 
 VERSION 0.8.2 (November 4, 2013)
 
