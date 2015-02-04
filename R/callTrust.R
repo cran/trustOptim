@@ -34,6 +34,7 @@
 #'     \code{symmetricMatrix}, returned only for \code{Sparse} method).}
 #'   \item{iterations}{Number of iterations before stopping}
 #'   \item{status}{A message describing the last state of the iterator}
+#'   \item{nnz}{For the Sparse method only, the number of nonzero elements in the lower triangle of the Hessian}.
 #' 
 #' @section Details:
 #'  The following sections explain how to use the package as a whole.
@@ -105,27 +106,6 @@
 #' To use the \pkg{sparseHessianFD} package, you need to provide the row and column indices of the non-zero elements of the lower triangle of the Hessian. This structure cannot change during the course of the trust.optim routine.  Also, you really should provide an analytic gradient.  \pkg{sparseHessianFD} computes finite differences of the gradient, so if the gradient itself is finite-differenced, so much error is propagated through that the Hessians are nearly worthless close to the optimum.
 #' 
 #' Of course, \pkg{sparseHessianFD} is useful only for the \code{Sparse} method.  That said, one may still get decent performance using these routines even if the Hessian is sparse, if the problem is not too large.  Just treat the Hessian as if it were sparse.
-#'
-#' @examples
-#' N <- 4
-#' start <- as.vector(rnorm(2*N,-1,3))
-#' res <- trust.optim(start,
-#'                    fn=f.rosenbrock,
-#'                    gr=df.rosenbrock,
-#'                    hs=hess.rosenbrock,
-#'                    method="Sparse",
-#'                    control=list(report.freq=1L,
-#'                        report.level=3L,
-#'                        report.precision=2L,
-#'                        preconditioner=2L
-#'                        )
-#'                    )
-#' 
-#' print(res$solution) ## solution at minimum
-#' print(res$fval) ## function value at minimim
-#' print(res$gr) ## gradient at minimum
-#' print(res$hessian) ## Hessian at minimum
-#' 
 #' @export
 trust.optim <- function(x, fn, gr, hs=NULL, method=c("SR1","BFGS","Sparse"), control = list(), ...)
 {
@@ -184,6 +164,12 @@ trust.optim <- function(x, fn, gr, hs=NULL, method=c("SR1","BFGS","Sparse"), con
     con[(namc <- names(control))] <- control
 
 
+  con$report.freq <- as.integer(con$report.freq)
+  con$report.level <- as.integer(con$report.level)
+  con$report.precision <- as.integer(con$report.precision)
+  con$precond.refresh.freq <- as.integer(con$precond.refresh.freq)
+  con$maxit <- as.integer(con$maxit)
+  
 ## check control parameter values here     
 
   if (!is.numeric(con$start.trust.radius) || con$start.trust.radius<=0 || !is.finite(con$start.trust.radius)) {
@@ -239,7 +225,8 @@ trust.optim <- function(x, fn, gr, hs=NULL, method=c("SR1","BFGS","Sparse"), con
   if (method=="Sparse") {
      
     con$quasi.newton.method <- 0L    
-    res <- .Call("sparseTR", x, fn1, gr1, hs1, con)
+##    res <- .Call("sparseTR", x, fn1, gr1, hs1, con)
+    res <- sparseTR(x, fn1, gr1, hs1, con)
     res$hessian <- Matrix::t(as(res$hessian,"symmetricMatrix"))
     
   }
@@ -259,8 +246,9 @@ trust.optim <- function(x, fn, gr, hs=NULL, method=c("SR1","BFGS","Sparse"), con
     } else {
       con$quasi.newton.method <- 2L
     }
-    res <- .Call("quasiTR", x, fn1, gr1, con)    
-  }
+    ##    res <- .Call("quasiTR", x, fn1, gr1, con)    
+    res <- quasiTR(x, fn1, gr1, con)
+}
  
   return(res)
 }
