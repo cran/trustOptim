@@ -1,6 +1,6 @@
 ## ---- echo = FALSE------------------------------------------------------------
 knitr::opts_chunk$set(collapse = TRUE, comment = "#", message=FALSE)
-options(digits=4, scipen=0)			       
+options(digits=4, scipen=0)
 
 ## -----------------------------------------------------------------------------
 require(trustOptim)
@@ -38,7 +38,7 @@ hess <- function(V) {
                     k=c(-1,0,1),
                     diagonals=list(d1,d0,d1),
                     symmetric=FALSE,
-                    giveCsparse=TRUE)
+                    repr='C')
     return(drop0(H))
 }
 
