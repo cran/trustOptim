@@ -1,6 +1,6 @@
-56d8a13ee7832237d63896e1c6d45863 *DESCRIPTION
+6cfb5ea23314339a4538733e05536d3d *DESCRIPTION
 f82e7628b34d2cc7ad1f0dec6e79388e *NAMESPACE
-4fc3e4924c435c566e1cc1579731595b *NEWS
+8390b59ca671d1c6e8c22da21602d7ba *NEWS
 63540e991dd4a84d338bb9d3fc0c4860 *R/RcppExports.R
 8fc06c82a1f0a536e1b041423da81488 *R/binary-data.R
 ee124724e0169c99f62d0f4e6e08e02b *R/binary.R
@@ -8,13 +8,13 @@ ee124724e0169c99f62d0f4e6e08e02b *R/binary.R
 03532cf28f581486b071513e8b6c887c *R/trustOptim.R
 29a82f6e2b52637a23b0d6bf1e23fb4e *build/vignette.rds
 3ddc379fb3b4c32470e3bc505f297f18 *data/binary.rda
-8da0f760c56937a3f498cfe6a638b989 *inst/CITATION
+5a4ec65c7b0a7d165d2a5dc3d959a27c *inst/CITATION
 eac729595c9f4aa7fcbe53c932c5c428 *inst/doc/trustOptim-demo.R
 ff211a18a194b0b1c2b778b803508e84 *inst/doc/trustOptim-demo.Rmd
-0b7bab890c443f9c63ea6005d08ac9e2 *inst/doc/trustOptim-demo.html
+12242cb796a365e040abfadb630cc475 *inst/doc/trustOptim-demo.html
 7a7be84498cb5817584a6c44598cc76a *inst/doc/trustOptim-quick.R
 c84711145b2a16ac5cb12b290a7b3b4f *inst/doc/trustOptim-quick.Rmd
-0e9d0f76cf05cd6a1f979f863f4a0c25 *inst/doc/trustOptim-quick.html
+168433fc0de1691ba9dae0dfea5e7b6a *inst/doc/trustOptim-quick.html
 d97d884715c6f174ff29d9cb6f04d04b *inst/include/CG-base.h
 10a8d7828ee39a7e50d192349f81dc6a *inst/include/CG-quasi.h
 2c676f375880ad49e4d99683446f7742 *inst/include/CG-sparse.h
@@ -31,8 +31,8 @@ b715a115d1fb519de95132fe2c880e22 *src/Makevars.win
 9d6aa4e1234b2a0fe515f36e9b5044d5 *src/init.c
 257c1220c767e6f022bd63d39af879e9 *src/trustOptim.cpp
 353cb3a7d8b0690079bf38ce46a16fc8 *tests/testthat.R
-bcafc37cce787f16cbf91c41fad31bc8 *tests/testthat/test_binary.R
-080a4219bbae05261a0d0b4e54ed2ae9 *tests/testthat/test_rosenbrock.R
+f3bc7f26509268b3f05090be48aea7bc *tests/testthat/test_binary.R
+cc2a9f90a765d01d7d20816cf032cb47 *tests/testthat/test_rosenbrock.R
 ff211a18a194b0b1c2b778b803508e84 *vignettes/trustOptim-demo.Rmd
 c84711145b2a16ac5cb12b290a7b3b4f *vignettes/trustOptim-quick.Rmd
 41cba6da1c920a7a888529affb204e06 *vignettes/trustOptim.bib
