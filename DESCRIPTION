@@ -2,8 +2,8 @@ Package: trustOptim
 Type: Package
 Title: Trust Region Optimization for Nonlinear Functions with Sparse
         Hessians
-Version: 0.8.7.3
-Date: 2021-10-07
+Version: 0.8.7.4
+Date: 2026-01-11
 Authors@R: person(given="Michael", family="Braun", email="braunm@smu.edu", role=c("aut","cre","cph"), comment=c(ORCID="0000-0003-4774-2119"))
 Maintainer: Michael Braun <braunm@smu.edu>
 URL: https://braunm.github.io/trustOptim/,
@@ -20,10 +20,10 @@ LinkingTo: Rcpp, RcppEigen (>= 0.3.3.7.0)
 Copyright: (c) 2015-2021 Michael Braun
 Encoding: UTF-8
 VignetteBuilder: knitr
-SystemRequirements: C++11
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.3
 NeedsCompilation: yes
-Packaged: 2021-10-07 17:54:10 UTC; braunm
-Author: Michael Braun [aut, cre, cph] (<https://orcid.org/0000-0003-4774-2119>)
+Packaged: 2026-01-12 19:48:44 UTC; braunm
+Author: Michael Braun [aut, cre, cph] (ORCID:
+    <https://orcid.org/0000-0003-4774-2119>)
 Repository: CRAN
-Date/Publication: 2021-10-11 08:10:02 UTC
+Date/Publication: 2026-01-13 06:10:12 UTC
